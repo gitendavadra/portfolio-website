@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giten Davadra — AI &amp; Python Developer</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0E14;
+    --panel:#11151D;
+    --line:#222836;
+    --text:#E7EAF0;
+    --muted:#8B93A7;
+    --amber:#F2A33A;
+    --amber-dim:#7A5A26;
+  }
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--text); font-family:'Sora',sans-serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .amber{color:var(--amber);}
+  .bg-panel{background:var(--panel);}
+  .border-line{border-color:var(--line);}
+  .text-muted{color:var(--muted);}
+
+  /* Terminal window chrome */
+  .winbar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);}
+  .dot{width:10px;height:10px;border-radius:50%;}
+
+  /* Tab-style section eyebrows */
+  .tab-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--amber);
+    letter-spacing:0.05em;
+  }
+  .tab-label::before{content:"// ";color:var(--amber-dim);}
+
+  /* blinking cursor */
+  .cursor{display:inline-block;width:10px;height:1.1em;background:var(--amber);margin-left:4px;vertical-align:-2px;animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .card{background:var(--panel); border:1px solid var(--line); transition:transform .25s ease, border-color .25s ease;}
+  .card:hover{transform:translateY(-4px); border-color:var(--amber-dim);}
+
+  .grid-fade{
+    background-image:
+      linear-gradient(rgba(34,40,54,.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34,40,54,.5) 1px, transparent 1px);
+    background-size: 36px 36px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black 30%, transparent 75%);
+  }
+
+  .skip-link:focus{outline:2px solid var(--amber); outline-offset:2px;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--amber); outline-offset:3px; border-radius:4px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .cursor{animation:none;}
+    .card{transition:none;}
+  }
+
+  .progress-track{background:var(--line);}
+  .progress-fill{background:var(--amber);}
+
+  /* Mobile drawer */
+  .drawer{transform:translateX(100%); transition:transform .25s ease;}
+  .drawer.open{transform:translateX(0);}
+  .hamburger span{display:block;height:2px;width:22px;background:var(--text);transition:all .2s ease;}
+  .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+  .hamburger.open span:nth-child(2){opacity:0;}
+  .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+  /* WhatsApp floating button */
+  .wa-fab{position:fixed; bottom:22px; right:22px; z-index:40; width:54px; height:54px; border-radius:50%;
+    background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(0,0,0,.4);
+    font-size:24px; color:#fff; transition:transform .2s ease;}
+  .wa-fab:hover{transform:scale(1.08);}
+</style>
+</head>
+<body class="antialiased">
+
+<a href="#main" class="skip-link sr-only focus:not-sr-only fixed top-2 left-2 bg-panel px-3 py-2 z-50 mono text-sm">Skip to content</a>
+
+<!-- NAV -->
+<nav class="fixed top-0 w-full bg-[#0B0E14]/90 backdrop-blur border-b border-line z-50">
+<div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+  <a href="#top" class="mono font-bold text-lg amber">giten<span class="text-muted">@</span>portfolio<span class="text-muted">:~$</span></a>
+  <div class="hidden md:flex gap-8 mono text-sm text-muted">
+    <a href="#about" class="hover:text-white transition">about</a>
+    <a href="#skills" class="hover:text-white transition">skills</a>
+    <a href="#projects" class="hover:text-white transition">projects</a>
+    <a href="#experience" class="hover:text-white transition">experience</a>
+    <a href="#certificates" class="hover:text-white transition">certificates</a>
+    <a href="#achievements" class="hover:text-white transition">achievements</a>
+    <a href="#resume" class="hover:text-white transition">resume</a>
+    <a href="#contact" class="hover:text-white transition">contact</a>
+  </div>
+  <button id="menuBtn" aria-label="Toggle menu" aria-expanded="false" class="hamburger md:hidden flex flex-col gap-[5px] p-2">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div id="drawer" class="drawer fixed top-0 right-0 h-full w-64 bg-panel border-l border-line z-40 pt-24 px-6 md:hidden">
+  <div class="flex flex-col gap-6 mono text-sm text-muted">
+    <a href="#about" class="nav-link hover:text-white transition">about</a>
+    <a href="#skills" class="nav-link hover:text-white transition">skills</a>
+    <a href="#projects" class="nav-link hover:text-white transition">projects</a>
+    <a href="#experience" class="nav-link hover:text-white transition">experience</a>
+    <a href="#certificates" class="nav-link hover:text-white transition">certificates</a>
+    <a href="#achievements" class="nav-link hover:text-white transition">achievements</a>
+    <a href="#resume" class="nav-link hover:text-white transition">resume</a>
+    <a href="#contact" class="nav-link hover:text-white transition">contact</a>
+  </div>
+</div>
+<div id="backdrop" class="fixed inset-0 bg-black/60 z-30 hidden md:hidden"></div>
+
+<main id="main">
+
+<!-- HERO -->
+<section id="top" class="relative min-h-screen flex items-center px-6 pt-24 overflow-hidden">
+  <div class="absolute inset-0 grid-fade pointer-events-none"></div>
+  <div class="max-w-6xl mx-auto w-full relative z-10">
+    <div class="max-w-3xl bg-panel border border-line rounded-lg shadow-2xl">
+      <div class="winbar">
+        <span class="dot" style="background:#EF5A52;"></span>
+        <span class="dot" style="background:#F2A33A;"></span>
+        <span class="dot" style="background:#5AC97A;"></span>
+        <span class="mono text-xs text-muted ml-2">~/giten-davadra/about.sh</span>
+      </div>
+      <div class="p-8 mono text-sm leading-relaxed">
+        <p class="text-muted">$ whoami</p>
+        <h1 class="text-3xl md:text-4xl font-bold mt-1 mb-1" style="font-family:'Sora',sans-serif;">Giten Davadra</h1>
+        <p class="amber mb-4">AI &amp; Python Developer<span class="cursor"></span></p>
+        <p class="text-muted">$ cat role.txt</p>
+        <p class="mt-1 text-[15px]" style="font-family:'Sora',sans-serif;">Computer Engineering student (Semester 5), Government Engineering College, Rajkot — building practical AI and software tools with Python.</p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4 mt-8">
+      <a href="#projects" class="bg-[var(--amber)] text-[#1A1300] font-semibold px-6 py-3 rounded-md mono text-sm hover:brightness-110 transition">view_projects()</a>
+      <a href="resume.pdf" download class="border border-line px-6 py-3 rounded-md mono text-sm text-muted hover:text-white hover:border-[var(--amber-dim)] transition">↓ download_resume.pdf</a>
+    </div>
+
+    <div class="flex gap-6 mt-8 text-xl text-muted">
+      <a href="https://github.com/gitendavadra" target="_blank" rel="noopener" aria-label="GitHub" class="hover:text-[var(--amber)] transition"><i class="fab fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/gecr240200107030/" target="_blank" rel="noopener" aria-label="LinkedIn" class="hover:text-[var(--amber)] transition"><i class="fab fa-linkedin"></i></a>
+      <a href="mailto:gitendavadra734@gmail.com" aria-label="Email" class="hover:text-[var(--amber)] transition"><i class="fas fa-envelope"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<section class="border-y border-line bg-panel">
+  <div class="max-w-6xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <div><p class="text-3xl font-bold amber mono">2+</p><p class="text-muted text-sm mt-1">Internships</p></div>
+    <div><p class="text-3xl font-bold amber mono">3+</p><p class="text-muted text-sm mt-1">Projects Built</p></div>
+    <div><p class="text-3xl font-bold amber mono">5+</p><p class="text-muted text-sm mt-1">Certificates</p></div>
+    <div><p class="text-3xl font-bold amber mono">7.76</p><p class="text-muted text-sm mt-1">SPI</p></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    <p class="tab-label mb-3">section 01</p>
+    <h2 class="text-3xl font-bold mb-6">About</h2>
+    <p class="text-muted leading-8 text-[16px]">
+      I'm a Computer Engineering student at Government Engineering College, Rajkot, affiliated with Gujarat Technological University.
+      My core coursework spans Data Structures &amp; Algorithms, DBMS, Object-Oriented Programming, and Operating Systems —
+      and outside the classroom I spend most of my time building things in Python, exploring practical applications of
+      Artificial Intelligence and Machine Learning, and shipping small, working software rather than just studying theory.
+    </p>
+    <p class="text-muted leading-8 text-[16px] mt-4">
+      I'm currently looking for opportunities — internships or junior roles — where I can apply AI/ML and software
+      development skills to real problems.
+    </p>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="py-24 px-6 bg-panel border-y border-line">
+  <div class="max-w-6xl mx-auto">
+    <p class="tab-label mb-3">section 02</p>
+    <h2 class="text-3xl font-bold mb-12">Skills</h2>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <div>
+        <h3 class="mono text-sm amber mb-4">languages &amp; core cs</h3>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Python</span><span class="text-muted mono">advanced</span></div>
+            <div class="h-1.5 rounded-full progress-track"><div class="h-1.5 rounded-full progress-fill" style="width:85%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>C Programming</span><span class="text-muted mono">proficient</span></div>
+            <div class="h-1.5 rounded-full progress-track"><div class="h-1.5 rounded-full progress-fill" style="width:70%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>SQL / DBMS</span><span class="text-muted mono">proficient</span></div>
+            <div class="h-1.5 rounded-full progress-track"><div class="h-1.5 rounded-full progress-fill" style="width:70%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span>Data Structures &amp; Algorithms</span><span class="text-muted mono">proficient</span></div>
+            <div class="h-1.5 rounded-full progress-track"><div class="h-1.5 rounded-full progress-fill" style="width:75%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="mono text-sm amber mb-4">tools &amp; web</h3>
+        <div class="flex flex-wrap gap-3">
+          <span class="card px-4 py-2 rounded-md text-sm">Git &amp; GitHub</span>
+          <span class="card px-4 py-2 rounded-md text-sm">VS Code</span>
+          <span class="card px-4 py-2 rounded-md text-sm">OpenAI API</span>
+          <span class="card px-4 py-2 rounded-md text-sm">HTML</span>
+          <span class="card px-4 py-2 rounded-md text-sm">CSS</span>
+          <span class="card px-4 py-2 rounded-md text-sm">JavaScript</span>
+          <span class="card px-4 py-2 rounded-md text-sm">Operating Systems</span>
+          <span class="card px-4 py-2 rounded-md text-sm">OOP</span>
+        </div>
+
+        <h3 class="mono text-sm amber mb-4 mt-10">interests</h3>
+        <div class="flex flex-wrap gap-3">
+          <span class="card px-4 py-2 rounded-md text-sm">Artificial Intelligence</span>
+          <span class="card px-4 py-2 rounded-md text-sm">Machine Learning</span>
+          <span class="card px-4 py-2 rounded-md text-sm">Software Development</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14">
+      <h3 class="mono text-sm amber mb-6">tech stack</h3>
+      <div class="grid grid-cols-4 sm:grid-cols-7 gap-4 text-center">
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fab fa-python text-2xl" style="color:#3776AB"></i><span class="text-xs text-muted">Python</span></div>
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fas fa-database text-2xl" style="color:#4479A1"></i><span class="text-xs text-muted">SQL</span></div>
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fab fa-git-alt text-2xl" style="color:#F05032"></i><span class="text-xs text-muted">Git</span></div>
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fas fa-robot text-2xl amber"></i><span class="text-xs text-muted">OpenAI</span></div>
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fab fa-html5 text-2xl" style="color:#E34F26"></i><span class="text-xs text-muted">HTML</span></div>
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fab fa-css3-alt text-2xl" style="color:#1572B6"></i><span class="text-xs text-muted">CSS</span></div>
+        <div class="card p-4 rounded-lg flex flex-col items-center gap-2"><i class="fab fa-js text-2xl" style="color:#F7DF1E"></i><span class="text-xs text-muted">JavaScript</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GITHUB STATS -->
+<section class="py-24 px-6">
+  <div class="max-w-6xl mx-auto">
+    <p class="tab-label mb-3">section 03</p>
+    <h2 class="text-3xl font-bold mb-10">GitHub Activity</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="gh-stat-wrap">
+        <img class="w-full rounded-lg border border-line" loading="lazy"
+          src="https://github-readme-stats.vercel.app/api?username=gitendavadra&show_icons=true&theme=midnight-purple&bg_color=11151D&title_color=F2A33A&icon_color=F2A33A&text_color=E7EAF0&border_color=222836"
+          alt="GitHub stats for gitendavadra"
+          onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'card rounded-lg p-8 text-center text-muted mono text-sm', textContent:'GitHub stats temporarily unavailable'}))">
+      </div>
+      <div class="gh-stat-wrap">
+        <img class="w-full rounded-lg border border-line" loading="lazy"
+          src="https://github-readme-stats.vercel.app/api/top-langs/?username=gitendavadra&layout=compact&theme=midnight-purple&bg_color=11151D&title_color=F2A33A&text_color=E7EAF0&border_color=222836"
+          alt="Top languages for gitendavadra"
+          onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'card rounded-lg p-8 text-center text-muted mono text-sm', textContent:'GitHub stats temporarily unavailable'}))">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="py-24 px-6 bg-panel border-y border-line">
+  <div class="max-w-6xl mx-auto">
+    <p class="tab-label mb-3">section 04</p>
+    <h2 class="text-3xl font-bold mb-12">Projects</h2>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="card p-6 rounded-lg flex flex-col">
+        <div class="mono text-xs amber mb-3">python · speech · ai</div>
+        <h3 class="text-lg font-bold mb-2">JARVIS — AI Voice Assistant</h3>
+        <p class="text-muted text-sm leading-6 flex-1">A Python-based voice assistant combining the OpenAI API, speech recognition, and text-to-speech to handle spoken commands and queries hands-free.</p>
+        <div class="flex gap-4 mt-5 text-sm">
+          <a href="https://github.com/gitendavadra/JARVIS" target="_blank" rel="noopener" class="amber hover:underline">View on GitHub →</a>
+        </div>
+      </div>
+
+      <div class="card p-6 rounded-lg flex flex-col">
+        <div class="mono text-xs amber mb-3">python · game logic</div>
+        <h3 class="text-lg font-bold mb-2">Snake Water Gun</h3>
+        <p class="text-muted text-sm leading-6 flex-1">A command-line Python game built to practice conditional logic, randomization, and clean control flow — a small project with a clear, testable ruleset.</p>
+        <div class="flex gap-4 mt-5 text-sm">
+          <a href="https://github.com/gitendavadra/Snake-Water-Gun" target="_blank" rel="noopener" class="amber hover:underline">View on GitHub →</a>
+        </div>
+      </div>
+
+      <div class="card p-6 rounded-lg flex flex-col">
+        <div class="mono text-xs amber mb-3">html · tailwind css · js</div>
+        <h3 class="text-lg font-bold mb-2">Portfolio Website</h3>
+        <p class="text-muted text-sm leading-6 flex-1">This site — a responsive personal portfolio built with HTML, Tailwind CSS, and JavaScript, designed to present projects and skills clearly to recruiters.</p>
+        <div class="flex gap-4 mt-5 text-sm">
+          <a href="https://github.com/gitendavadra/Portfolio" target="_blank" rel="noopener" class="amber hover:underline">View on GitHub →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    <p class="tab-label mb-3">section 05</p>
+    <h2 class="text-3xl font-bold mb-12">Experience</h2>
+
+    <div class="space-y-10">
+      <div class="border-l border-line pl-6 relative">
+        <div class="absolute w-2.5 h-2.5 rounded-full bg-[var(--amber)] -left-[5px] top-1"></div>
+        <p class="mono text-xs text-muted">Internship</p>
+        <h3 class="font-bold mt-1">AI Internship — Codec Technologies</h3>
+        <p class="text-muted text-sm mt-1 leading-6">Worked on practical AI-focused tasks and projects, applying Python and machine learning fundamentals in a professional setting.</p>
+      </div>
+
+      <div class="border-l border-line pl-6 relative">
+        <div class="absolute w-2.5 h-2.5 rounded-full bg-[var(--amber)] -left-[5px] top-1"></div>
+        <p class="mono text-xs text-muted">Internship</p>
+        <h3 class="font-bold mt-1">AI Web Development Internship — InAmigos Foundation</h3>
+        <p class="text-muted text-sm mt-1 leading-6">Contributed to web development work with an AI focus, gaining hands-on experience integrating AI features into web-based projects.</p>
+      </div>
+    </div>
+
+    <h2 class="text-3xl font-bold mb-12 mt-20">Education</h2>
+    <div class="border-l border-line pl-6 relative">
+      <div class="absolute w-2.5 h-2.5 rounded-full bg-[var(--amber)] -left-[5px] top-1"></div>
+      <p class="mono text-xs text-muted">2024 — present</p>
+      <h3 class="font-bold mt-1">B.E. in Computer Engineering</h3>
+      <p class="text-muted text-sm mt-1">Government Engineering College, Rajkot (Gujarat Technological University) · Currently in Semester 5 · SPI 7.76</p>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATES -->
+<section id="certificates" class="py-24 px-6 bg-panel border-y border-line">
+  <div class="max-w-6xl mx-auto">
+    <p class="tab-label mb-3">section 06</p>
+    <h2 class="text-3xl font-bold mb-12">Certificates</h2>
+    <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-certificate text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">AI Internship Certificate</h3>
+        <p class="text-muted text-xs mt-1">Codec Technologies</p>
+      </div>
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-certificate text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">Web Development Certificate</h3>
+        <p class="text-muted text-xs mt-1">InAmigos Foundation</p>
+      </div>
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-certificate text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">Volunteer Certificate</h3>
+        <p class="text-muted text-xs mt-1">Community / college activities</p>
+      </div>
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-certificate text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">Training Certificate</h3>
+        <p class="text-muted text-xs mt-1">Technical training program</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements" class="py-24 px-6">
+  <div class="max-w-4xl mx-auto">
+    <p class="tab-label mb-3">section 07</p>
+    <h2 class="text-3xl font-bold mb-12">Achievements</h2>
+    <div class="grid sm:grid-cols-3 gap-6">
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-trophy text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">AI Internship</h3>
+        <p class="text-muted text-xs mt-1">Completed at Codec Technologies</p>
+      </div>
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-trophy text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">InAmigos Selection</h3>
+        <p class="text-muted text-xs mt-1">Selected for AI Web Development Internship</p>
+      </div>
+      <div class="card p-6 rounded-lg text-center">
+        <i class="fas fa-trophy text-2xl amber mb-3"></i>
+        <h3 class="font-bold text-sm">GTU SPI 7.76</h3>
+        <p class="text-muted text-xs mt-1">Strong academic performance</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESUME -->
+<section id="resume" class="py-24 px-6 bg-panel border-y border-line">
+  <div class="max-w-4xl mx-auto text-center">
+    <p class="tab-label mb-3 justify-center flex">section 08</p>
+    <h2 class="text-3xl font-bold mb-4">Resume</h2>
+    <p class="text-muted mb-8">View it inline, or download a copy for your records.</p>
+
+    <div class="flex justify-center gap-4 mb-8">
+      <a href="resume.pdf" target="_blank" class="bg-[var(--amber)] text-[#1A1300] font-semibold px-6 py-3 rounded-md mono text-sm hover:brightness-110 transition">View Resume</a>
+      <a href="resume.pdf" download class="border border-line px-6 py-3 rounded-md mono text-sm text-muted hover:text-white hover:border-[var(--amber-dim)] transition">↓ Download Resume</a>
+    </div>
+
+    <div class="card rounded-lg overflow-hidden border border-line">
+      <embed src="resume.pdf" type="application/pdf" class="w-full" style="height:600px;" />
+      <p class="text-muted text-xs p-4 mono">If the preview doesn't load, use the buttons above to view or download the PDF directly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="py-24 px-6 bg-panel border-t border-line">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="tab-label mb-3 justify-center flex">section 09</p>
+    <h2 class="text-3xl font-bold mb-4">Get in Touch</h2>
+    <p class="text-muted mb-10">Open to internship and entry-level opportunities in AI/ML and software development.</p>
+
+    <div class="grid sm:grid-cols-4 gap-4 mono text-sm">
+      <a href="mailto:gitendavadra734@gmail.com" class="card p-4 rounded-md hover:border-[var(--amber-dim)]">
+        <i class="fas fa-envelope amber block mb-2 text-lg"></i>
+        gitendavadra734@gmail.com
+      </a>
+      <a href="tel:+919998172349" class="card p-4 rounded-md hover:border-[var(--amber-dim)]">
+        <i class="fas fa-phone amber block mb-2 text-lg"></i>
+        +91 99981 72349
+      </a>
+      <a href="https://wa.me/919998172349" target="_blank" rel="noopener" class="card p-4 rounded-md hover:border-[var(--amber-dim)]">
+        <i class="fab fa-whatsapp block mb-2 text-lg" style="color:#25D366"></i>
+        WhatsApp
+      </a>
+      <div class="card p-4 rounded-md">
+        <i class="fas fa-location-dot amber block mb-2 text-lg"></i>
+        Rajkot, Gujarat, India
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<a href="https://wa.me/919998172349" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" class="wa-fab">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<footer class="text-center py-8 border-t border-line mono text-xs text-muted">
+  © 2026 Giten Davadra — built with HTML, Tailwind CSS &amp; JS
+</footer>
+
+<script>
+  // Mobile drawer toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const drawer = document.getElementById('drawer');
+  const backdrop = document.getElementById('backdrop');
+
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    backdrop.classList.add('hidden');
+    menuBtn.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+  }
+  function openDrawer(){
+    drawer.classList.add('open');
+    backdrop.classList.remove('hidden');
+    menuBtn.classList.add('open');
+    menuBtn.setAttribute('aria-expanded','true');
+  }
+
+  menuBtn.addEventListener('click', () => {
+    drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+  });
+  backdrop.addEventListener('click', closeDrawer);
+  document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', closeDrawer));
+</script>
+
+</body>
+</html>
